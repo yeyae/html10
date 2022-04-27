@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../jquery-3.6.0.js"></script>
+    <!-- 상위 폴더의 jquery.js 파일 불러오기-->
+    <script>
+      $(document).ready(function () {
+        //     let request = new XMLHttpRequest();
+        //     request.open();
+        //     request.onreadystatechange = function (event) {
+        //         if(request.readyState==4){
+        //             // 통신 성공 후에 할일
+        //         }
+        //     };
+        //     fetch()
+        let url = "https://random-data-api.com/api/users/random_user"; // 데이터를 요청할 주소
+        $.ajax({
+          url: url, // 요청을 보낼 주소
+          type: "GET", // 요청 방법
+          success: function (data) {
+            // 요청 성공시 실행할 함수
+            console.log(data); // 우리가 실행하고 싶은 코드
+          },
+        });
+
+        // get 방식으로 ajax 요청
+        $.get(url, function (data) {
+          console.log(data);
+        });
+
+        // GET => 데이터를 요청해서 가져오기만할때 사용
+        // POST => 우리가 데이터를 보내서 서버에서 데이터를 생성/수정
+        // PUT => 데이터를 수정하는 요청
+        // DELTE => 데이터를 삭제하는 요청
+        // POST => 데이터를 생성하는 요청
+        // GET => 데이터를 조회하는 요청
+      });
+    </script>
+  </head>
+  <body></body>
+</html>

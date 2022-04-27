@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../jquery-3.6.0.js"></script>
+    <script>
+      $(document).ready(function () {
+        for (let i = 0; i < 40; i++) {
+          let innerHtml = `
+            <p>${i}
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat ullam
+                molestias animi similique est? Quisquam amet dicta repellendus. Ipsa
+                voluptas nemo ipsam sint commodi quos odit? Dicta a exercitationem vero!
+            </p>`;
+          $("#content").html(function (index, html) {
+            return html + innerHtml;
+          });
+        }
+        // 페이지 하나당 보여줄 p 갯수
+        let show_per_page = 5;
+        let number_of_items = 40; // #content의 자손의 갯수
+        let number_of_pages = Math.ceil(number_of_items / show_per_page); // 페이지 수
+
+        // 현재 페이지 정해주기
+        $("#current_page").val(0); // 첫페이지로 시작
+        $("#show_per_page").val(show_per_page); // 한페이지에 몇개씩 보여줄건지
+
+        // 앞으로 가기 버튼
+        let nav_html = `<a class="previous_link" href="javascript:previous();">Prev</a>`;
+
+        // 페이지 숫자 버튼
+        // 속성값으로 페이지 버튼이 몇번째 페이지 버튼인지 구별할수 있도록 index 라는 속성을 부여
+        // $(".page_link[index="0"]") ==> index 속성이 0인 page_link
+        let current_num = 0;
+        while (number_of_pages > current_num) {
+          nav_html += `<a class="page_link" href="javascript:go_to_page(${current_num})" 
+           index="${current_num}">${current_num + 1}</a>`;
+          current_num++;
+        }
+
+        // 뒤로 가기 버튼
+        nav_html += `<a class="next_link" href="javascript:next();">Next</a>`;
+        $("#page_nav").html(nav_html);
+
+        // 첫 페이지 설정 ( 시작시 1페이지가 선택되어있는 상태 )
+        $("#page_nav .page_link:first").addClass("active_page");
+
+        function init() {
+          // 이 함수를 만드는 이유는
+          // 동적으로 만든 html요소에 접근하기 위해서 따로 함수를 선언
+          $("#content").children().css("display", "none");
+          // #content 의 자손은?? 우리가 처음에 삽입했던 본문 ( p태그 )
+
+          // 첫 페이지에 해당하는 p태그 다섯개는 다시 보이도록 설정
+          $("#content")
+            .children()
+            .slice(0, show_per_page)
+            .css("display", "block");
+        }
+
+        init();
+      });
+      function previous() {
+        let prev_page = parseInt($("#current_page").val()) - 1;
+
+        if ($(".active_page").prev(".page_link").length) {
+          // 현재 활성화된 페이지 버튼 앞에
+          // page_link 를 찾아서 만약 page_link 의 length 속성이 있다면
+          // 앞 page_link가 있는 것이니까 페이지를 이동하고
+          // 없다면 이동하지 않는다.
+          go_to_page(prev_page);
+        }
+      } // 이전 페이지
+
+      function go_to_page(number) {
+        let show_per_page = parseInt($("#show_per_page").val());
+
+        // 보여주기 시작할 p태그의 번호(순서)
+        // number가 2이면? 6번째 인덱스로는 0 1 2 3 4 / 5 6 7 8 9 / 10 11 12 13 14 15 /
+        let start = number * show_per_page; // 보여주기 시작할 p 태그 순서
+        let end = start + show_per_page; // 마지막 p태그
+
+        // #content 의 자손의 css속성 변경 => display 를 none
+        $("#content").children().css("display", "none");
+        // #content 의 자손의 css속성 변경 => start ~ end 까지 p태그는 display block
+        $("#content").children().slice(start, end).css("display", "block");
+
+        // 페이지 링크의 속성도 바꿔 줘야 된다.
+        $(".page_link[index=" + number + "]") // 현재 페이지 번호
+          .addClass("active_page") // active_page 클래스 추가
+          .siblings(".active_page") // 형제 선택자 중에 .active_page 인 형제
+          .removeClass("active_page"); // 이전 페이지 버튼 active_page 클래스 제거
+
+        // 현재 페이지 번호 값 업데이트
+        $("#current_page").val(number);
+      } // 해당 페이지로 이동
+
+      function next() {
+        let next_page = parseInt($("#current_page").val()) + 1; // 다음 페이지
+
+        if ($(".active_page").next(".page_link").length) {
+          // 다음 페이지 링크의 length 라는 속성이 있다면
+          // 페이지를 이동
+          // length 라는 속성이 없다면 다음 페이지는 없는것이기 때문에 (현재가 마지막 페이지)
+          // 이동하지 않음
+          go_to_page(next_page);
+        }
+      } // 다음 페이지
+    </script>
+    <style>
+      #page_nav a {
+        /* 페이지 링크 버튼의 기본 상태 */
+        padding: 3px;
+        border: 1px solid black;
+        margin: 2px;
+        color: black;
+        text-decoration: none;
+      }
+
+      .active_page {
+        /* 현재 활성화된 페이지 상태 */
+        background: darkblue;
+        color: white !important; /* !important css 우선순위 강제 설정 */
+      }
+    </style>
+  </head>
+  <body>
+    <input type="hidden" id="current_page" />
+    <!-- 우리가 현재 페이지 번호-->
+    <input type="hidden" id="show_per_page" />
+    <!-- 페이지 하나당 보여줄 문장의 갯수 -->
+    <div id="content"></div>
+    <div id="page_nav"></div>
+    <br />
+  </body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../jquery-3.6.0.js"></script>
+    <script>
+      $(document).ready(function () {
+        let url = "https://random-data-api.com/api/users/random_user?size=10";
+        // 자바스크립트 사용 x
+        // jquery 만 이용해서
+        // randomapi 에서 사용자정보 10개 가져와서
+        // document 안에 요소 생성, 추가
+        // 스타일은 자유
+        $.ajax({
+          url: url,
+          type: "GET",
+          success: function (data) {
+            // 여기에 우리가 document 안에 요소 생성, 추가
+            let innerHtml = ""; // 생성할 html 코드
+            console.log(data);
+            for (let i = 0; i < data.length; i++) {
+              // 받아온 data의 length 만큼 반복
+              innerHtml = `
+                <div>
+                    <h1>${data[i].username}</h1>
+                    <h2>${data[i].email}</h2>
+                    <h2>${data[i].phone_number}</h2>
+                    <h2>${data[i].id}</h2>
+                </div>
+                `;
+              $("body").html(function (index, html) {
+                return html + innerHtml;
+                // 원래 body에 있던 html 뒤에 새로 만든 html 코드를 이어붙이기
+              });
+            }
+          },
+        });
+
+        // $.get(url, function(data) {
+        //     // 여기에 우리가 document 안에 요소 생성, 추가
+        // })
+      });
+    </script>
+  </head>
+  <body></body>
+</html>
